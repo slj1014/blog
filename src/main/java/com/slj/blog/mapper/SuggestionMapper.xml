@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.slj.blog.mapper.SuggestionMapper">
+	<!-- 用户插入 -->
+	<insert id="createSuggestion" parameterType="Suggestion">
+		INSERT INTO
+		t_suggestion(fromName,toAddress,subject,content,createTime,isRead)
+		VALUES(#{fromName},#{toAddress},#{subject},#{content},#{createTime},#{isRead})
+	</insert>
+
+	<!-- 查询未读邮件 -->
+	<select id="getSuggestions" resultType="Suggestion"
+		parameterType="Suggestion">
+		SELECT * FROM t_suggestion WHERE 1=1
+		<if test="isRead!=null">AND isRead=#{isRead}</if>
+	</select>
+</mapper>

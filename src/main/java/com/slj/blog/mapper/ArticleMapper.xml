@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.slj.blog.mapper.ArticleMapper">
+    <!-- 目的：为dao接口方法提供sql语句配置 -->
+
+    <!-- 根据id查询文章 -->
+    <select id="findById" resultType="Article" parameterType="int">
+		SELECT
+		*
+		FROM
+		t_article
+		WHERE
+		article_id = #{articleId}
+	</select>
+
+    <!-- 创建文章 -->
+    <insert id="createArticle" parameterType="Article">
+		INSERT INTO
+		t_article(article_create,
+		article_update,article_title,article_content,article_category,article_type,article_url,user_id,article_image,article_des,article_read)
+		VALUES(#{articleCreate},
+		#{articleUpdate},#{articleTitle},#{articleContent},#{articleCategory},#{articleType},#{articleUrl},#{userId},#{articleImage},#{articleDes},0)
+	</insert>
+
+    <!-- 查询首页文章 -->
+    <select id="findIndexArticle" resultType="Article">
+		SELECT
+		article_id,article_title,article_des,article_image,article_create FROM
+		t_article
+		ORDER BY article_create DESC limit 3
+	</select>
+
+    <select id="findPageArticle" resultType="Article" parameterType="Article">
+        SELECT
+        article_id,article_title,article_des,article_image,article_read,article_create
+        FROM
+        t_article WHERE 1=1
+        <if test="articleTitle!= null and articleTitle!=''">
+            AND article_title LIKE CONCAT('%','${articleTitle}','%' )
+        </if>
+        ORDER BY article_create DESC
+    </select>
+
+    <!-- 更新阅读数 -->
+    <update id="updateArticleRead" parameterType="int">
+		UPDATE t_article
+		set article_read=article_read+1 WHERE
+		article_id=#{articleId}
+	</update>
+
+    <!-- 查询下一篇文章 -->
+    <select id="findNextArticle" parameterType="long" resultType="Article">
+		SELECT article_id,article_title FROM t_article <![CDATA[WHERE article_create>#{createTime} ORDER BY article_create DESC limit 1
+        ]]>
+    </select>
+
+    <!-- 查询下一篇文章 -->
+    <select id="findPreviousArticle" parameterType="long"
+            resultType="Article">
+        SELECT article_id,article_title FROM t_article <![CDATA[WHERE article_create<#{createTime} ORDER BY article_create DESC limit 1]]>
+    </select>
+</mapper>
